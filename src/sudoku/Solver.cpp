@@ -3,24 +3,39 @@
 Solver::Solver(Board& board) : board(board) {}
 
 bool Solver::solve(){
-    //initial recursive call
+    return solveRecursive();
 }
 
 bool Solver::solveRecursive(){
+    int row, col;
 
-    //try and find empty cell pos
-
+    if (!findEmptyCell(row, col)){
+        return true; //no empty cells = solved
+    }
     
-    //iterate numbers 1-9
-        //check valid move
+    for (int num = 1; num <= 9; num++){
+        if (board.isValidMove(row, col, num)){
+            board.setCell(row, col, num);
 
-        //continue solving (recursive call)
+            if (solveRecursive()){
+                return true;
+            }
 
-        //backtrack (undo move)
+            board.setCell(row, col, 0); //Backtrack call
+        }
+    }
 
+    return false; //Trigger backtrack
 }
 
 bool Solver::findEmptyCell(int& row, int& col) const {
-    //iterate through board to find an empty cell to change the row and col references to
+    for (row = 0; row < Board::SIZE; row++){
+        for (col = 0; col < Board::SIZE; col++){
+            if (board.isCellEmpty(row, col)){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
