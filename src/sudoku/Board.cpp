@@ -45,9 +45,35 @@ bool Board::isValidMove(int row, int col, int value) const {
                       value);
 }
 
-bool Board::isSolved() const {}
+bool Board::isSolved() const {
+    for (auto& row : grid){
+        for (int value : row){
+            if (value == 0){
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
-bool Board::isValidBoard() const {}
+bool Board::isValidBoard() {
+    for (int row = 0; row < SIZE; row++){
+        for (int col = 0; col < SIZE; col++){
+            int value = grid[row][col];
+            if (value != 0) {
+                //check if valid
+                grid[row][col] = 0;
+                bool valid = isValidMove(row, col, value);
+                grid[row][col] = value;
+
+                if (!valid){
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
 
 const Board::Grid& Board::getGrid() const {
     return grid;
@@ -60,7 +86,6 @@ void Board::clear() {
 }
 
 //Private
-
 bool Board::isValidRow(int row, int value) const {
     for (int col = 0; col < SIZE; col++){
         if (grid[row][col] == value){

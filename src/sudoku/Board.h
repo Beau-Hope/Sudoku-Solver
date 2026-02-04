@@ -20,7 +20,7 @@ public:
     //Query
     bool isCellEmpty(int row, int col) const;
     bool isValidMove(int row, int col, int value) const;
-    bool isValidBoard() const;
+    bool isValidBoard();
     bool isSolved() const;
 
     const Grid& getGrid() const;
