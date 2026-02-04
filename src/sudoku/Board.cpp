@@ -29,7 +29,21 @@ bool Board::isCellEmpty(int row, int col) const {
     return grid[row][col] == 0;
 }
 
-bool Board::isValidMove(int row, int col, int value) const {}
+bool Board::isValidMove(int row, int col, int value) const {
+    if (value == 0) {
+        return true; //clearing a cell is valid
+    }
+
+    if (!isCellEmpty(row, col)) {
+        return false; //shouldn't replace non-empty cells
+    }
+
+    return isValidRow(row, value)
+        && isValidCol(col, value)
+        && isValidBox(row - row % BOX_SIZE,
+                      col - col % BOX_SIZE,
+                      value);
+}
 
 bool Board::isSolved() const {}
 
@@ -46,3 +60,32 @@ void Board::clear() {
 }
 
 //Private
+
+bool Board::isValidRow(int row, int value) const {
+    for (int col = 0; col < SIZE; col++){
+        if (grid[row][col] == value){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Board::isValidCol(int col, int value) const {
+    for (int row = 0; row < SIZE; row++){
+        if (grid[row][col] == value){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Board::isValidBox(int boxRow, int boxCol, int value) const{
+    for (int r = 0; r < BOX_SIZE; r++){
+        for (int c = 0; c < BOX_SIZE; c++){
+            if (grid[boxRow + r][boxCol + c] == value){
+                return false;
+            }
+        }
+    }
+    return true;
+}

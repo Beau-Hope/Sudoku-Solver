@@ -29,4 +29,7 @@ public:
 private:
     Grid grid;
 
+    bool isValidRow(int row, int value) const;
+    bool isValidCol(int col, int value) const;
+    bool isValidBox(int boxRow, int boxCol, int value) const;
 };
