@@ -1,4 +1,5 @@
 #include "Board.h"
+#include <iostream>
 #include <stdexcept>
 
 //Constructor
@@ -82,6 +83,27 @@ const Board::Grid& Board::getGrid() const {
 void Board::clear() {
     for (auto& row : grid) {
         row.fill(0);
+    }
+}
+
+void Board::print() const {
+    for (int row = 0; row < SIZE; row++) {
+        if (row % 3 == 0 && row != 0) {
+            std::cout << "------+-------+------\n";
+        }
+
+        for (int col = 0; col < SIZE; col++) {
+            if (col % 3 == 0 && col != 0) {
+                std::cout << "| ";
+            }
+
+            if (grid[row][col] == 0) {
+                std::cout << ". ";
+            } else {
+                std::cout << grid[row][col] << " ";
+            }
+        }
+        std::cout << "\n";
     }
 }
 

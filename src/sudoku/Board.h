@@ -25,6 +25,7 @@ public:
 
     const Grid& getGrid() const;
     void clear();
+    void print() const;
 
 private:
     Grid grid;
