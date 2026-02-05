@@ -83,13 +83,10 @@ void MainWindow::readBoardFromUI() {
 }
 
 void MainWindow::updateUI(int row, int col, bool backtracking) {
-    for (int r = 0; r < 9; r++) {
-        for (int c = 0; c < 9; c++) {
-            sudokuTable->setValue(r, c, board.getCell(r, c));
-        }
-    }
+    sudokuTable->setValue(row, col, board.getCell(row, col));
 
     sudokuTable->setActiveCell(row, col, backtracking);
+
     QApplication::processEvents();
 }
 
