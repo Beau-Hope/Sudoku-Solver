@@ -15,6 +15,7 @@ public:
 
 private slots:
     void startSolver();
+    void resetPuzzle();
 
 private:
     Board board;
@@ -22,6 +23,7 @@ private:
 
     SudokuTable* sudokuTable;
     QPushButton* solveButton;
+    QPushButton* resetButton;
 
     bool fixedCells[9][9]{};
 

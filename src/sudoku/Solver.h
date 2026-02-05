@@ -10,9 +10,12 @@ public:
 
     void setCallback(UpdateCallback cb);
     bool solve();
+    void stop() { stopFlag = true; }
 private:
     Board& board;
     UpdateCallback callback = nullptr;
+
+    bool stopFlag = false;
 
     bool solveRecursive();
     bool findEmptyCell(int& row, int& col) const;

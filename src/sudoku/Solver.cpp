@@ -7,10 +7,12 @@ void Solver::setCallback(UpdateCallback cb) {
 }
 
 bool Solver::solve(){
+    stopFlag = false;
     return solveRecursive();
 }
 
 bool Solver::solveRecursive(){
+    if (stopFlag) return false;
     int row, col;
 
     if (!findEmptyCell(row, col)){
@@ -18,17 +20,20 @@ bool Solver::solveRecursive(){
     }
     
     for (int num = 1; num <= 9; num++){
+        if (stopFlag) return false;
+
         if (board.isValidMove(row, col, num)){
             board.setCell(row, col, num);
 
-            if (callback) callback(row, col, false);
+            if (callback && !stopFlag) callback(row, col, false);
 
             if (solveRecursive()){
                 return true;
             }
 
             board.setCell(row, col, 0); //Backtrack call
-            if (callback) callback(row, col, true);
+            
+            if (callback && !stopFlag) callback(row, col, true);
         }
     }
 

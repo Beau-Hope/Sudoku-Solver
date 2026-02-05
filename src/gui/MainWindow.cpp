@@ -38,8 +38,22 @@ void MainWindow::setupUI() {
         QPushButton:pressed { background-color: #155bb5; }
     )");
 
+    resetButton = new QPushButton("Reset");
+    resetButton->setFixedHeight(50);
+    resetButton->setStyleSheet(R"(
+        QPushButton {
+            background-color: #f05454;
+            color: white;
+            font-size: 18px;
+            border-radius: 8px;
+        }
+        QPushButton:hover { background-color: #d94343; }
+        QPushButton:pressed { background-color: #c03636; }
+    )");
+
     layout->addWidget(sudokuTable, 1);
     layout->addWidget(solveButton);
+    layout->addWidget(resetButton);
 
     setCentralWidget(central);
 
@@ -47,8 +61,11 @@ void MainWindow::setupUI() {
         this, [this](int r, int c, int v) {
             board.setCell(r, c, v);
             sudokuTable->setValue(r, c, v);
-        });
+        }
+    );
 
+    connect(resetButton, &QPushButton::clicked,
+        this, &MainWindow::resetPuzzle);
 }
 
 void MainWindow::readBoardFromUI() {
@@ -87,7 +104,7 @@ void MainWindow::startSolver() {
     }
 
     solver.setCallback([this](int r, int c, bool backtracking) {
-        QThread::msleep(40);
+        QThread::msleep(30);
         updateUI(r, c, backtracking);
     });
 
@@ -112,4 +129,20 @@ bool MainWindow::isValidInput() {
         }
     }
     return true;
+}
+
+void MainWindow::resetPuzzle() {
+    solver.stop();
+    board.clear();
+    sudokuTable->clear();
+
+    for (int r = 0; r < 9; r++){
+        for (int c = 0; c < 9; c++) {
+            fixedCells[r][c] = false;
+        }
+    }
+
+    
+    sudokuTable->setActiveCell(-1, -1, false);
+    sudokuTable->setEnabled(true);
 }
