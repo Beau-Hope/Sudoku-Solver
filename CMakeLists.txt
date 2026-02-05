@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(SudokuSolverQt LANGUAGES CXX)
+project(SudokuSolverQt VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,14 +13,14 @@ find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 add_executable(SudokuSolverQt
     src/main.cpp
-    src/MainWindow.h
-    src/MainWindow.cpp
+    src/gui/MainWindow.cpp
+    src/gui/MainWindow.h
+    src/gui/SudokuTable.cpp
+    src/gui/SudokuTable.h
     src/sudoku/Board.cpp
+    src/sudoku/Board.h
     src/sudoku/Solver.cpp
-)
-
-target_include_directories(SudokuSolverQt PRIVATE
-    src
+    src/sudoku/Solver.h
 )
 
 target_link_libraries(SudokuSolverQt
