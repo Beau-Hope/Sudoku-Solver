@@ -2,6 +2,10 @@
 
 Solver::Solver(Board& board) : board(board) {}
 
+void Solver::setCallback(UpdateCallback cb) {
+    callback = cb;
+}
+
 bool Solver::solve(){
     return solveRecursive();
 }
@@ -17,11 +21,14 @@ bool Solver::solveRecursive(){
         if (board.isValidMove(row, col, num)){
             board.setCell(row, col, num);
 
+            if (callback) callback(row, col, false);
+
             if (solveRecursive()){
                 return true;
             }
 
             board.setCell(row, col, 0); //Backtrack call
+            if (callback) callback(row, col, true);
         }
     }
 
