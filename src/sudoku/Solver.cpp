@@ -1,9 +1,22 @@
 #include "Solver.h"
+#include <vector>
+#include <algorithm>
+#include <random>
+
+static std::mt19937& rng() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    return gen;
+}
 
 Solver::Solver(Board& board) : board(board) {}
 
 void Solver::setCallback(UpdateCallback cb) {
     callback = cb;
+}
+
+void Solver::enableRandomMode(bool enable) {
+    randomMode = enable;
 }
 
 bool Solver::solve(){
@@ -18,8 +31,13 @@ bool Solver::solveRecursive(){
     if (!findEmptyCell(row, col)){
         return true; //no empty cells = solved
     }
+
+    std::vector<int> nums{1,2,3,4,5,6,7,8,9};
+    if (randomMode) {
+        std::shuffle(nums.begin(), nums.end(), rng());
+    }
     
-    for (int num = 1; num <= 9; num++){
+    for (int num : nums){
         if (stopFlag) return false;
 
         if (board.isValidMove(row, col, num)){

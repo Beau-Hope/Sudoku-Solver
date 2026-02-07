@@ -9,6 +9,8 @@ public:
     explicit Solver(Board& initialBoard);
 
     void setCallback(UpdateCallback cb);
+    void enableRandomMode(bool enable);
+
     bool solve();
     void stop() { stopFlag = true; }
 private:
@@ -16,6 +18,7 @@ private:
     UpdateCallback callback = nullptr;
 
     bool stopFlag = false;
+    bool randomMode = false;
 
     bool solveRecursive();
     bool findEmptyCell(int& row, int& col) const;

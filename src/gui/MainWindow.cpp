@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget* parent)
 
     connect(resetButton, &QPushButton::clicked,
             this, &MainWindow::resetPuzzle);
+
+    connect(generateBtn, &QPushButton::clicked,
+            this, &MainWindow::generatePuzzle);
 }
 
 void MainWindow::setupUI() {
@@ -69,11 +72,29 @@ void MainWindow::setupUI() {
     connect(speedSlider, &QSlider::valueChanged, this,
         [this](int v) { solverDelayMs = 100 - v; });
 
+    generateBtn = new QPushButton("Generate");
+    generateBtn->setFixedHeight(50);
+    generateBtn->setStyleSheet(R"(
+    QPushButton {
+        background-color: #4caf50;
+        color: white;
+        font-size: 18px;
+        border-radius: 8px;
+    }
+    QPushButton:hover { background-color: #43a047; }
+    QPushButton:pressed { background-color: #388e3c; }
+    )");
+
+    difficultyBox = new QComboBox;
+    difficultyBox->addItems({"Easy","Medium","Hard"});
+
     layout->addLayout(boardLayout, 1);
     layout->addWidget(speedLabel);
     layout->addWidget(speedSlider);
     layout->addWidget(solveButton);
     layout->addWidget(resetButton);
+    layout->addWidget(difficultyBox);
+    layout->addWidget(generateBtn);
 
     setCentralWidget(central);
 
@@ -165,4 +186,25 @@ void MainWindow::resetPuzzle() {
     sudokuTable->clear();
     sudokuTable->setSolved(false);
     sudokuTable->setEnabled(true);
+}
+
+void MainWindow::generatePuzzle() {
+    board.clear();
+    sudokuTable->clear();
+
+    auto diff = static_cast<PuzzleGenerator::Difficulty>(
+        difficultyBox->currentIndex());
+
+    Board puzzle = PuzzleGenerator::generate(diff);
+
+    for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+            int v = puzzle.getCell(row, col);
+            if (v) {
+                board.setCell(row, col, v, true);
+                sudokuTable->setValue(row, col, v);
+                sudokuTable->setFixed(row, col, true);
+            }
+        }
+    }
 }

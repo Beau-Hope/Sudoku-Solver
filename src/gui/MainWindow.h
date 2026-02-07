@@ -4,8 +4,10 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QLabel>
+#include <QComboBox>
 
 #include "SudokuTable.h"
+#include "PuzzleGenerator.h"
 #include "../sudoku/Board.h"
 #include "../sudoku/Solver.h"
 
@@ -18,6 +20,7 @@ public:
 private slots:
     void startSolver();
     void resetPuzzle();
+    void generatePuzzle();
 
 private:
     Board board;
@@ -27,6 +30,8 @@ private:
     QPushButton* solveButton;
     QPushButton* resetButton;
     QSlider* speedSlider;
+    QPushButton* generateBtn;
+    QComboBox* difficultyBox;
 
     bool fixedCells[9][9]{};
     int solverDelayMs = 30;

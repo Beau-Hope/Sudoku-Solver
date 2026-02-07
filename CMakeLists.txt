@@ -17,6 +17,8 @@ add_executable(SudokuSolverQt
     src/gui/MainWindow.h
     src/gui/SudokuTable.cpp
     src/gui/SudokuTable.h
+    src/gui/PuzzleGenerator.cpp
+    src/gui/PuzzleGenerator.h
     src/sudoku/Board.cpp
     src/sudoku/Board.h
     src/sudoku/Solver.cpp
