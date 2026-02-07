@@ -3,7 +3,7 @@ A desktop Sudoku solver and generator implemented in C++ using Qt.
 It features a recursive backtracking algorithm for solving puzzles and randomised puzzle generation with difficulty level selection.
 
 # About Sudoku
-Sudoku is a logic-based number placement puzzle. the objective is to fill a 9x9 grid so that each row, column, and 3x3 box contains all the integers from 1 to 9 inclusive.
+Sudoku is a logic-based number placement puzzle. The objective is to fill a 9x9 grid so that each row, column, and 3x3 box contains all the integers from 1 to 9 inclusive.
 
 I've always enjoyed logic puzzles like Sudoku. When solving these puzzles on paper, it is easy to make a logical error which can unravel your solution many moves down the track. This project provides a desktop implementation to aid the user to focus on solving strategies while ensuring all inputs are valid.
 
