@@ -159,6 +159,10 @@ void MainWindow::startSolver() {
 
     if (solver.solve()) {
         sudokuTable->setSolved(true);
+    } else {
+        QMessageBox::critical(this, "Unsolvable Puzzle",
+                              "The puzzle cannot be solved. "
+                              "Please try generating a different puzzle.");
     }
 
     sudokuTable->setEnabled(true);
