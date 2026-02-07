@@ -27,6 +27,9 @@ protected:
 
 private:
     QRect cellRect(int r, int c) const;
+    int cellSize() const;          // Current cell size
+    QRect boardRect() const;       // Board rectangle
+    const int minSize = 480;      // Minimum starting size
 
     int grid[9][9]{};
     bool fixed[9][9]{};

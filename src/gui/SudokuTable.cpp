@@ -9,7 +9,8 @@ SudokuTable::SudokuTable(QWidget* parent)
     : QWidget(parent)
 {
     setFocusPolicy(Qt::StrongFocus);
-    setFixedSize(480, 480);
+    setMinimumSize(minSize, minSize);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
 void SudokuTable::clear() {
@@ -47,15 +48,33 @@ void SudokuTable::setActiveCell(int r, int c, bool backtracking) {
     update();
 }
 
+int SudokuTable::cellSize() const {
+    int size = std::max(std::min(width(), height()), minSize);
+    return size / 9;
+}
+
+QRect SudokuTable::boardRect() const {
+    int size = cellSize() * 9;
+    int x = (width() - size) / 2;
+    int y = (height() - size) / 2;
+    return QRect(x, y, size, size);
+}
+
 QRect SudokuTable::cellRect(int r, int c) const {
-    int cell = width() / 9;
-    return QRect(c * cell, r * cell, cell, cell);
+    QRect board = boardRect();
+    int cell = cellSize();
+    return QRect(board.left() + c * cell,
+                 board.top() + r * cell,
+                 cell,
+                 cell);
 }
 
 void SudokuTable::mousePressEvent(QMouseEvent* e) {
-    int cell = width() / 9;
-    selectedCol = e->pos().x() / cell;
-    selectedRow = e->pos().y() / cell;
+    QRect board = boardRect();
+    if (!board.contains(e->pos())) return;
+    int cell = cellSize();
+    selectedCol = (e->pos().x() - board.left()) / cell;
+    selectedRow = (e->pos().y() - board.top()) / cell;
     update();
 }
 
@@ -76,12 +95,11 @@ void SudokuTable::paintEvent(QPaintEvent*) {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
 
-    if (solved)
-        p.fillRect(rect(), QColor(220, 255, 220));
-    else
-        p.fillRect(rect(), Qt::white);
+    QRect board = boardRect();
+    int cell = cellSize();
 
-    int cell = width() / 9;
+    p.fillRect(rect(), Qt::white);
+    if (solved) p.fillRect(board, QColor(220, 255, 220));
 
     for (int r = 0; r < 9; r++) {
         for (int c = 0; c < 9; c++) {
@@ -127,8 +145,8 @@ void SudokuTable::paintEvent(QPaintEvent*) {
         pen.setWidth(i % 3 == 0 ? 3 : 1);
         p.setPen(pen);
 
-        p.drawLine(0, i * cell, 9 * cell, i * cell);
-        p.drawLine(i * cell, 0, i * cell, 9 * cell);
+        p.drawLine(board.left(), board.top()+i*cell, board.right(), board.top()+i*cell);
+        p.drawLine(board.left()+i*cell, board.top(), board.left()+i*cell, board.bottom());
     }
 }
 

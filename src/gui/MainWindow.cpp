@@ -30,7 +30,7 @@ void MainWindow::setupUI() {
     layout->setContentsMargins(20, 20, 20, 20);
 
     sudokuTable = new SudokuTable(this);
-    sudokuTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    sudokuTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // Center board
     QHBoxLayout* boardLayout = new QHBoxLayout();
