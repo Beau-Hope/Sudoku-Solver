@@ -7,7 +7,7 @@
 #include <QComboBox>
 
 #include "SudokuTable.h"
-#include "PuzzleGenerator.h"
+#include "../sudoku/PuzzleGenerator.h"
 #include "../sudoku/Board.h"
 #include "../sudoku/Solver.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../sudoku/Board.h"
+#include "Board.h"
 
 class PuzzleGenerator {
 public:

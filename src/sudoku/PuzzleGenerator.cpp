@@ -1,5 +1,5 @@
 #include "PuzzleGenerator.h"
-#include "../sudoku/Solver.h"
+#include "Solver.h"
 
 #include <vector>
 #include <algorithm>
