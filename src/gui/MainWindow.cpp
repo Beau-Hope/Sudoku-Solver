@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget* parent)
 
     connect(solveButton, &QPushButton::clicked,
             this, &MainWindow::startSolver);
+
+    connect(resetButton, &QPushButton::clicked,
+            this, &MainWindow::resetPuzzle);
 }
 
 void MainWindow::setupUI() {
@@ -24,34 +27,51 @@ void MainWindow::setupUI() {
     layout->setContentsMargins(20, 20, 20, 20);
 
     sudokuTable = new SudokuTable(this);
+    sudokuTable->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    // Center board
+    QHBoxLayout* boardLayout = new QHBoxLayout();
+    boardLayout->addStretch();
+    boardLayout->addWidget(sudokuTable);
+    boardLayout->addStretch();
 
     solveButton = new QPushButton("Solve");
     solveButton->setFixedHeight(50);
     solveButton->setStyleSheet(R"(
-        QPushButton {
-            background-color: #2c7be5;
-            color: white;
-            font-size: 18px;
-            border-radius: 8px;
-        }
-        QPushButton:hover { background-color: #1a68d1; }
-        QPushButton:pressed { background-color: #155bb5; }
+    QPushButton {
+        background-color: #2c7be5;
+        color: white;
+        font-size: 18px;
+        border-radius: 8px;
+    }
+    QPushButton:hover { background-color: #1a68d1; }
+    QPushButton:pressed { background-color: #155bb5; }
     )");
 
     resetButton = new QPushButton("Reset");
     resetButton->setFixedHeight(50);
     resetButton->setStyleSheet(R"(
-        QPushButton {
-            background-color: #f05454;
-            color: white;
-            font-size: 18px;
-            border-radius: 8px;
-        }
-        QPushButton:hover { background-color: #d94343; }
-        QPushButton:pressed { background-color: #c03636; }
+    QPushButton {
+        background-color: #f05454;
+        color: white;
+        font-size: 18px;
+        border-radius: 8px;
+    }
+    QPushButton:hover { background-color: #d94343; }
+    QPushButton:pressed { background-color: #c03636; }
     )");
 
-    layout->addWidget(sudokuTable, 1);
+    QLabel* speedLabel = new QLabel("Solver speed");
+    speedSlider = new QSlider(Qt::Horizontal);
+    speedSlider->setRange(0, 100);
+    speedSlider->setValue(30);
+
+    connect(speedSlider, &QSlider::valueChanged, this,
+        [this](int v) { solverDelayMs = 100 - v; });
+
+    layout->addLayout(boardLayout, 1);
+    layout->addWidget(speedLabel);
+    layout->addWidget(speedSlider);
     layout->addWidget(solveButton);
     layout->addWidget(resetButton);
 
@@ -59,13 +79,25 @@ void MainWindow::setupUI() {
 
     connect(sudokuTable, &SudokuTable::cellEdited,
         this, [this](int r, int c, int v) {
-            board.setCell(r, c, v);
+
             sudokuTable->setValue(r, c, v);
+
+            sudokuTable->setInvalid(r, c, false);
+
+            if (v == 0) {
+                board.setCell(r, c, 0);
+                return;
+            }
+
+            board.setCell(r, c, 0);
+
+            if (board.isValidMove(r, c, v)) {
+                board.setCell(r, c, v);
+            } else {
+                sudokuTable->setInvalid(r, c, true);
+            }
         }
     );
-
-    connect(resetButton, &QPushButton::clicked,
-        this, &MainWindow::resetPuzzle);
 }
 
 void MainWindow::readBoardFromUI() {
@@ -75,7 +107,6 @@ void MainWindow::readBoardFromUI() {
         for (int c = 0; c < 9; c++) {
             int val = sudokuTable->value(r, c);
             board.setCell(r, c, val);
-
             fixedCells[r][c] = (val != 0);
             sudokuTable->setFixed(r, c, fixedCells[r][c]);
         }
@@ -84,9 +115,7 @@ void MainWindow::readBoardFromUI() {
 
 void MainWindow::updateUI(int row, int col, bool backtracking) {
     sudokuTable->setValue(row, col, board.getCell(row, col));
-
     sudokuTable->setActiveCell(row, col, backtracking);
-
     QApplication::processEvents();
 }
 
@@ -94,22 +123,25 @@ void MainWindow::startSolver() {
     readBoardFromUI();
 
     if (!isValidInput()) {
-        QMessageBox::warning(this,
-            "Invalid Sudoku",
-            "The puzzle violates Sudoku rules.");
+        QMessageBox::warning(this, "Invalid Sudoku",
+                             "The puzzle violates Sudoku rules.");
         return;
     }
 
+    sudokuTable->setSolved(false);
+    sudokuTable->setEnabled(false);
+
     solver.setCallback([this](int r, int c, bool backtracking) {
-        QThread::msleep(30);
+        QThread::msleep(solverDelayMs);
         updateUI(r, c, backtracking);
     });
 
-    sudokuTable->setEnabled(false);
-    solver.solve();
+    if (solver.solve()) {
+        sudokuTable->setSolved(true);
+    }
+
     sudokuTable->setEnabled(true);
 }
-
 
 bool MainWindow::isValidInput() {
     for (int r = 0; r < 9; r++) {
@@ -121,8 +153,7 @@ bool MainWindow::isValidInput() {
             bool ok = board.isValidMove(r, c, v);
             board.setCell(r, c, v);
 
-            if (!ok)
-                return false;
+            if (!ok) return false;
         }
     }
     return true;
@@ -132,14 +163,6 @@ void MainWindow::resetPuzzle() {
     solver.stop();
     board.clear();
     sudokuTable->clear();
-
-    for (int r = 0; r < 9; r++){
-        for (int c = 0; c < 9; c++) {
-            fixedCells[r][c] = false;
-        }
-    }
-
-    
-    sudokuTable->setActiveCell(-1, -1, false);
+    sudokuTable->setSolved(false);
     sudokuTable->setEnabled(true);
 }

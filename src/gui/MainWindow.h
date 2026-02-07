@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 #include <QPushButton>
+#include <QSlider>
+#include <QLabel>
 
 #include "SudokuTable.h"
 #include "../sudoku/Board.h"
@@ -24,8 +26,10 @@ private:
     SudokuTable* sudokuTable;
     QPushButton* solveButton;
     QPushButton* resetButton;
+    QSlider* speedSlider;
 
     bool fixedCells[9][9]{};
+    int solverDelayMs = 30;
 
     void setupUI();
     void readBoardFromUI();

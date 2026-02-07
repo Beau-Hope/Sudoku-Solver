@@ -1,4 +1,5 @@
 #pragma once
+
 #include <QWidget>
 
 class SudokuTable : public QWidget {
@@ -8,29 +9,34 @@ public:
     explicit SudokuTable(QWidget* parent = nullptr);
 
     void clear();
-    void setValue(int row, int col, int value);
-    void setFixed(int row, int col, bool isFixed);
-    void setActiveCell(int row, int col, bool backtracking);
-    int value(int row, int col) const;
+    void setValue(int r, int c, int v);
+    void setFixed(int r, int c, bool f);
+    void setInvalid(int r, int c, bool inv);
+    void setActiveCell(int r, int c, bool backtracking);
+    void setSolved(bool s);
+
+    int value(int r, int c) const;
 
 signals:
     void cellEdited(int row, int col, int value);
 
 protected:
     void paintEvent(QPaintEvent*) override;
-    void mousePressEvent(QMouseEvent* event) override;
-    void keyPressEvent(QKeyEvent* event) override;
+    void mousePressEvent(QMouseEvent*) override;
+    void keyPressEvent(QKeyEvent*) override;
 
 private:
-    int  grid[9][9]{};
+    QRect cellRect(int r, int c) const;
+
+    int grid[9][9]{};
     bool fixed[9][9]{};
+    bool invalid[9][9]{};
 
     int selectedRow = -1;
     int selectedCol = -1;
-
     int activeRow = -1;
     int activeCol = -1;
-    bool isBacktracking = false;
 
-    QRect cellRect(int row, int col) const;
+    bool isBacktracking = false;
+    bool solved = false;
 };
