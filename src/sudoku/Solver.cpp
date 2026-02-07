@@ -1,8 +1,13 @@
 #include "Solver.h"
+
 #include <vector>
 #include <algorithm>
 #include <random>
 
+/**
+ * Shared RNG for randomised solving.
+ * Static to avoid reseeding on every call.
+ */
 static std::mt19937& rng() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -24,12 +29,17 @@ bool Solver::solve(){
     return solveRecursive();
 }
 
+void Solver::stop(){
+    stopFlag = true;
+}
+
 bool Solver::solveRecursive(){
     if (stopFlag) return false;
+    
     int row, col;
 
     if (!findEmptyCell(row, col)){
-        return true; //no empty cells = solved
+        return true; // no empty cells = solved
     }
 
     std::vector<int> nums{1,2,3,4,5,6,7,8,9};
@@ -68,4 +78,3 @@ bool Solver::findEmptyCell(int& row, int& col) const {
     }
     return false;
 }
-

@@ -5,6 +5,10 @@
 #include <algorithm>
 #include <random>
 
+/**
+ * Gloabal random number generator
+ * Uses static engine to avoid reseeding
+ */
 static std::mt19937& rng() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
@@ -40,6 +44,7 @@ void PuzzleGenerator::removeCells(Board& board, Difficulty difficulty) {
         }
     }
 
+    // Randomise removal order
     std::shuffle(cells.begin(), cells.end(), rng());
 
     int toRemove = 81 - clues;
@@ -49,9 +54,11 @@ void PuzzleGenerator::removeCells(Board& board, Difficulty difficulty) {
             break;
         }
 
+        // Remove cell temporarily
         int backup = board.getCell(r, c);
         board.setCell(r, c, 0);
 
+        // Check if still solvable
         Board copy = board;
         Solver solver(copy);
         solver.enableRandomMode(false);

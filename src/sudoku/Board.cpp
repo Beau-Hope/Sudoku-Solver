@@ -1,8 +1,9 @@
 #include "Board.h"
+
 #include <iostream>
 #include <stdexcept>
 
-//Constructor
+//Constructors
 Board::Board() {
     clear();
 }
@@ -14,7 +15,7 @@ Board::Board(const Grid& initialGrid){
     }
 }
 
-//Public
+// Accessors
 int Board::getCell(int row, int col) const {
     return grid[row][col];
 }
@@ -23,6 +24,7 @@ bool Board::isFixed(int row, int col) const {
     return fixed[row][col];
 }
 
+// Mutators
 void Board::setCell(int row, int col, int value, bool isFixedCell) {
     if (value < 0 || value > 9) {
         throw std::invalid_argument("Value must be between 0 and 9");
@@ -31,6 +33,7 @@ void Board::setCell(int row, int col, int value, bool isFixedCell) {
     fixed[row][col] = isFixedCell;
 }
 
+// Queries
 bool Board::isCellEmpty(int row, int col) const {
     return grid[row][col] == 0;
 }
@@ -115,7 +118,7 @@ void Board::print() const {
     }
 }
 
-//Private
+// Private helpers
 bool Board::isValidRow(int row, int value) const {
     for (int col = 0; col < SIZE; col++){
         if (grid[row][col] == value){

@@ -2,6 +2,12 @@
 
 #include <array>
 
+/**
+ * Represents a 9x9 sudoku board.
+ * 
+ * Stores cell values, tracks fixed cells, and provides
+ * validation tools for the solver and UI.
+ */
 class Board {
 public:
     static constexpr int SIZE = 9;
@@ -10,23 +16,32 @@ public:
     using Grid = std::array<std::array<int, SIZE>, SIZE>;
     using FixedGrid = std::array<std::array<bool, SIZE>, SIZE>;
 
-    //Constructor
+    // Create an empty board
     Board();
+    // Create a board from an initial grid
+    // Throws std::invalid_argument if the grid violates rules
     explicit Board(const Grid& initialGrid);
 
-    //Access
+    // Accessors
     int getCell(int row, int col) const;
+    bool isFixed(int row, int col) const;
+
+    // Mutators
     void setCell(int row, int col, int value, bool fixed = false);
 
-    //Query
+    //Queries
     bool isCellEmpty(int row, int col) const;
     bool isValidMove(int row, int col, int value) const;
     bool isValidBoard();
     bool isSolved() const;
-    bool isFixed(int row, int col) const;
 
+    // Get full grid
     const Grid& getGrid() const;
+
+    // Clear all values and fixed flags
     void clear();
+
+    // Print board to stdout (debugging/early testing)
     void print() const;
 
 private:

@@ -1,9 +1,11 @@
 #include "MainWindow.h"
 
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QThread>
 #include <QApplication>
 #include <QMessageBox>
+#include <QLabel>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent), solver(board)
@@ -97,25 +99,27 @@ void MainWindow::setupUI() {
     layout->addWidget(generateBtn);
 
     setCentralWidget(central);
-
+    
+    // Handle cell edits from the sudoku grid
     connect(sudokuTable, &SudokuTable::cellEdited,
-        this, [this](int r, int c, int v) {
+        this, [this](int row, int col, int value) {
 
-            sudokuTable->setValue(r, c, v);
+            sudokuTable->setValue(row, col, value);
 
-            sudokuTable->setInvalid(r, c, false);
+            sudokuTable->setInvalid(row, col, false);
 
-            if (v == 0) {
-                board.setCell(r, c, 0);
+            // Clear cell
+            if (value == 0) {
+                board.setCell(row, col, 0);
                 return;
             }
 
-            board.setCell(r, c, 0);
+            board.setCell(row, col, 0);
 
-            if (board.isValidMove(r, c, v)) {
-                board.setCell(r, c, v);
+            if (board.isValidMove(row, col, value)) {
+                board.setCell(row, col, value);
             } else {
-                sudokuTable->setInvalid(r, c, true);
+                sudokuTable->setInvalid(row, col, true);
             }
         }
     );
@@ -124,12 +128,11 @@ void MainWindow::setupUI() {
 void MainWindow::readBoardFromUI() {
     board.clear();
 
-    for (int r = 0; r < 9; r++) {
-        for (int c = 0; c < 9; c++) {
-            int val = sudokuTable->value(r, c);
-            board.setCell(r, c, val);
-            fixedCells[r][c] = (val != 0);
-            sudokuTable->setFixed(r, c, fixedCells[r][c]);
+    for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+            int val = sudokuTable->value(row, col);
+            board.setCell(row, col, val);
+            sudokuTable->setFixed(row, col, val != 0);
         }
     }
 }
@@ -169,14 +172,14 @@ void MainWindow::startSolver() {
 }
 
 bool MainWindow::isValidInput() {
-    for (int r = 0; r < 9; r++) {
-        for (int c = 0; c < 9; c++) {
-            int v = board.getCell(r, c);
-            if (v == 0) continue;
+    for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 9; col++) {
+            int val = board.getCell(row, col);
+            if (val == 0) continue;
 
-            board.setCell(r, c, 0);
-            bool ok = board.isValidMove(r, c, v);
-            board.setCell(r, c, v);
+            board.setCell(row, col, 0);
+            bool ok = board.isValidMove(row, col, val);
+            board.setCell(row, col, val);
 
             if (!ok) return false;
         }
